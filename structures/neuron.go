@@ -4,35 +4,30 @@ import (
 	"math/rand"
 	"fmt"
 	"github.com/nu7hatch/gouuid"
+	"math"
 )
 
 const INPUT_COUNT int = 10
 const AVG_NEURON_WEIGHTS float64 = 1.0
 const WEIGHT_VARIANCE float64 = 0.2
-const AVG_ACTIVATION_THRESHOLD float64 = 10
-const ACTIVATION_VARIANCE float64 = 1.5
+const ACTIVATION_RESPONSE float64 = 1 // not sure what this is yet
+const BIAS float64 = -1
 
 type Neuron struct {
 	id *uuid.UUID
 	weights             []float64
-	activationThreshold float64
 	nucleus             *Nucleus
 }
 
 func newNeuron(nucleus *Nucleus) *Neuron {
 	fmt.Println("Generating new neuron")
-	activationThreshold := AVG_ACTIVATION_THRESHOLD + (rand.Float64() * ACTIVATION_VARIANCE)
-	if rand.Float64() > 0.5 {
-		activationThreshold *= -1
-	}
 	id, _ := uuid.NewV4()
 	neuron := &Neuron{
 		id: id,
 		weights: make([]float64, 0),
-		activationThreshold: activationThreshold,
 		nucleus: nucleus,
 	}
-	for i := 0; i < INPUT_COUNT; i++  {
+	for i := 0; i < INPUT_COUNT+1; i++  { // we're using the +1 as our activation threshold
 		varianceResult := rand.Float64() * WEIGHT_VARIANCE
 		if rand.Float64() > 0.5 {
 			varianceResult *= -1
@@ -43,17 +38,21 @@ func newNeuron(nucleus *Nucleus) *Neuron {
 }
 
 func (n *Neuron) process(inputs []float64) float64 {
-	var activationValue float64 = 0
+	var result float64 = 0
+	// process inputs
 	for index, input := range inputs {
-		activationValue += input * (n.weights[index % len(n.weights)])
+		// we skip the last weight, since that's being used for our bias
+		result += input * (n.weights[index % (len(n.weights)-2)])
 	}
-	if activationValue >= n.activationThreshold {
-		return 1
-	} else {
-		return 0
-	}
+	// add in the bias
+	result += n.weights[len(n.weights)-1] * BIAS
+	return sigmoid(result)
+}
+
+func sigmoid(input float64) float64 {
+	return 1 / (1 + math.Exp(-input / ACTIVATION_RESPONSE))
 }
 
 func (n *Neuron) String() string {
-	return fmt.Sprintf("Neuron(id:%s, weights:%v, activationThreshold:%f", n.id, n.weights, n.activationThreshold)
+	return fmt.Sprintf("Neuron(id:%s, weights:%v)", n.id, n.weights)
 }
