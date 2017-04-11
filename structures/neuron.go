@@ -8,8 +8,6 @@ import (
 )
 
 const INPUT_COUNT int = 10
-const AVG_NEURON_WEIGHTS float64 = 1.0
-const WEIGHT_VARIANCE float64 = 0.2
 const ACTIVATION_RESPONSE float64 = 1 // not sure what this is yet
 const BIAS float64 = -1
 
@@ -28,11 +26,7 @@ func newNeuron(nucleus *Nucleus) *Neuron {
 		nucleus: nucleus,
 	}
 	for i := 0; i < INPUT_COUNT+1; i++  { // we're using the +1 as our activation threshold
-		varianceResult := rand.Float64() * WEIGHT_VARIANCE
-		if rand.Float64() > 0.5 {
-			varianceResult *= -1
-		}
-		neuron.weights = append(neuron.weights, AVG_NEURON_WEIGHTS + varianceResult)
+		neuron.weights = append(neuron.weights, randFloat())
 	}
 	return neuron
 }
@@ -51,6 +45,11 @@ func (n *Neuron) process(inputs []float64) float64 {
 
 func sigmoid(input float64) float64 {
 	return 1 / (1 + math.Exp(-input / ACTIVATION_RESPONSE))
+}
+
+func randFloat() float64 {
+	//returns a random float in the range -1 < n < 1
+	return rand.Float64() - rand.Float64()
 }
 
 func (n *Neuron) String() string {

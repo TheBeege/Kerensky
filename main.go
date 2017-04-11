@@ -5,11 +5,9 @@ import (
 	"fmt"
 )
 
-const NUCLEUS_COUNT int = 10
+const NUCLEUS_COUNT int = 1000
 
 func main() {
-	fmt.Println("hello world")
-
 	fmt.Println("========== GENERATING NUCLEI ==========")
 	nuclei := make([]*structures.Nucleus, 0)
 	for i := 0; i < NUCLEUS_COUNT; i++ {
