@@ -1,4 +1,4 @@
-package structures
+package neuronet
 
 import (
 	"math/rand"
