@@ -43,6 +43,19 @@ func (n *Neuron) process(inputs []float64) float64 {
 	return sigmoid(result)
 }
 
+func (n *Neuron) GetWeights() []float64 {
+	return n.weights
+}
+
+func (n *Neuron) SetWeights(weights []float64) {
+	n.weights = weights
+}
+
+func (n *Neuron) String() string {
+	return fmt.Sprintf("Neuron(id:%s, weights:%v)", n.id, n.weights)
+}
+
+
 func sigmoid(input float64) float64 {
 	return 1 / (1 + math.Exp(-input / ACTIVATION_RESPONSE))
 }
@@ -50,8 +63,4 @@ func sigmoid(input float64) float64 {
 func randFloat() float64 {
 	//returns a random float in the range -1 < n < 1
 	return rand.Float64() - rand.Float64()
-}
-
-func (n *Neuron) String() string {
-	return fmt.Sprintf("Neuron(id:%s, weights:%v)", n.id, n.weights)
 }
