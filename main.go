@@ -6,14 +6,12 @@ import (
 	"log"
 )
 
-const NUCLEUS_COUNT int = 1000
-
 func main() {
 	log.Println("========== READING CONFIG ==========")
 	configData := config.ReadConfig()
 	log.Println("========== GENERATING NUCLEI ==========")
 	nuclei := make([]*neuronet.Nucleus, 0)
-	for i := 0; i < NUCLEUS_COUNT; i++ {
+	for i := 0; i < configData.NucleusCount; i++ {
 		nuclei = append(nuclei, neuronet.NewNucleus(configData))
 	}
 
