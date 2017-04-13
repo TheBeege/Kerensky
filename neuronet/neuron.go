@@ -5,27 +5,28 @@ import (
 	"fmt"
 	"github.com/nu7hatch/gouuid"
 	"math"
+	"github.com/TheBeege/Kerensky/config"
 )
-
-const INPUT_COUNT int = 10
-const ACTIVATION_RESPONSE float64 = 1 // not sure what this is yet
-const BIAS float64 = -1
 
 type Neuron struct {
 	id *uuid.UUID
 	weights             []float64
 	nucleus             *Nucleus
+	bias float64
+	activationResponse float64
 }
 
-func newNeuron(nucleus *Nucleus) *Neuron {
+func newNeuron(nucleus *Nucleus, configData *config.Config) *Neuron {
 	fmt.Println("Generating new neuron")
 	id, _ := uuid.NewV4()
 	neuron := &Neuron{
-		id: id,
-		weights: make([]float64, 0),
-		nucleus: nucleus,
+		id:                 id,
+		weights:            make([]float64, 0),
+		nucleus:            nucleus,
+		bias:               configData.Bias,
+		activationResponse: configData.ActivationResponse,
 	}
-	for i := 0; i < INPUT_COUNT+1; i++  { // we're using the +1 as our activation threshold
+	for i := 0; i < configData.InputCount+1; i++  { // we're using the +1 as our activation threshold
 		neuron.weights = append(neuron.weights, randFloat())
 	}
 	return neuron
@@ -39,8 +40,8 @@ func (n *Neuron) process(inputs []float64) float64 {
 		result += input * (n.weights[index % (len(n.weights)-2)])
 	}
 	// add in the bias
-	result += n.weights[len(n.weights)-1] * BIAS
-	return sigmoid(result)
+	result += n.weights[len(n.weights)-1] * n.bias
+	return sigmoid(result, n.activationResponse)
 }
 
 func (n *Neuron) GetWeights() []float64 {
@@ -56,8 +57,8 @@ func (n *Neuron) String() string {
 }
 
 
-func sigmoid(input float64) float64 {
-	return 1 / (1 + math.Exp(-input / ACTIVATION_RESPONSE))
+func sigmoid(input float64, activationResponse float64) float64 {
+	return 1 / (1 + math.Exp(-input / activationResponse))
 }
 
 func randFloat() float64 {

@@ -5,10 +5,8 @@ import (
 	"fmt"
 
 	"github.com/nu7hatch/gouuid"
+	"github.com/TheBeege/Kerensky/config"
 )
-
-const AVG_NUCLEUS_NEURON_COUNT int = 15
-const NEURON_COUNT_VARIANCE int = 3
 
 type Nucleus struct {
 	id *uuid.UUID
@@ -16,17 +14,17 @@ type Nucleus struct {
 	downstreamNucleus []*Nucleus
 }
 
-func NewNucleus() *Nucleus {
+func NewNucleus(configData *config.Config) *Nucleus {
 	fmt.Println("Generating new nucleus")
-	varianceResult := rand.Intn(NEURON_COUNT_VARIANCE*2) - NEURON_COUNT_VARIANCE
+	varianceResult := rand.Intn(configData.NeuronCountVariance*2) - configData.NeuronCountVariance
 	neurons := make([]*Neuron, 0)
 	id, _ := uuid.NewV4()
 	nucleus := &Nucleus{
 		id: id,
 		neurons: neurons,
 	}
-	for i := 0; i < AVG_NUCLEUS_NEURON_COUNT + varianceResult; i++ {
-		nucleus.neurons = append(nucleus.neurons, newNeuron(nucleus))
+	for i := 0; i < configData.AvgNucleusNeuronCount + varianceResult; i++ {
+		nucleus.neurons = append(nucleus.neurons, newNeuron(nucleus, configData))
 	}
 	return nucleus
 }

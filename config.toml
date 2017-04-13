@@ -1,0 +1,6 @@
+nucleusCount=1000
+inputCount=10
+activationResponse=1.0
+bias=-1.0
+avgNucleusNeuronCount=15
+neuronCountVariance=3
