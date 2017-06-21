@@ -1,18 +1,18 @@
 package main
 
 import (
-	"github.com/TheBeege/Kerensky/neuronet"
 	"github.com/TheBeege/Kerensky/config"
+	"github.com/TheBeege/Kerensky/neuronet"
 	"log"
 )
 
 func main() {
 	log.Println("========== READING CONFIG ==========")
-	configData := config.ReadConfig()
+	config.ReadConfig()
 	log.Println("========== GENERATING NUCLEI ==========")
 	nuclei := make([]*neuronet.Nucleus, 0)
-	for i := 0; i < configData.NucleusCount; i++ {
-		nuclei = append(nuclei, neuronet.NewNucleus(configData))
+	for i := 0; i < config.Config.NucleusCount; i++ {
+		nuclei = append(nuclei, neuronet.NewNucleus())
 	}
 
 	for _, nucleus := range nuclei {

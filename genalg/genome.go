@@ -7,8 +7,8 @@ type Genome struct {
 
 func NewGenome(weights []float64, fitness float64) *Genome {
 	return &Genome{
-		weights:weights,
-		fitness:fitness,
+		weights: weights,
+		fitness: fitness,
 	}
 }
 

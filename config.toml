@@ -4,3 +4,7 @@ activationResponse=1.0
 bias=-1.0
 avgNucleusNeuronCount=15
 neuronCountVariance=3
+crossoverRate=0.7
+mutationRate=0.001
+numCopiesElite=1
+numElite=4

@@ -1,24 +1,28 @@
 package config
 
 import (
-	"github.com/BurntSushi/toml"
-	"os"
-	"log"
 	"flag"
+	"github.com/BurntSushi/toml"
+	"log"
+	"os"
 )
 
-type Config struct {
-	NucleusCount int
-	InputCount int
-	ActivationResponse float64
-	Bias float64
+// https://blog.gopheracademy.com/advent-2014/reading-config-files-the-go-way/
+var Config struct {
+	NucleusCount          int
+	InputCount            int
+	ActivationResponse    float64
+	Bias                  float64
 	AvgNucleusNeuronCount int
-	NeuronCountVariance int
+	NeuronCountVariance   int
+	CrossoverRate         float64
+	MutationRate          float64
+	NumCopiesElite        int
+	NumElite              int
 }
 
-
 // Reads info from config file
-func ReadConfig() *Config {
+func ReadConfig() {
 	var filePath = *flag.String("configFile", "config.toml", "The path to the data file to be used")
 	log.Println("Reading data file...")
 	cwd, _ := os.Getwd()
@@ -31,9 +35,7 @@ func ReadConfig() *Config {
 	}
 
 	log.Println("Decoding data file...")
-	data := &Config{}
-	if _, err := toml.DecodeFile(filePath, data); err != nil {
+	if _, err := toml.DecodeFile(filePath, &Config); err != nil {
 		log.Fatal(err)
 	}
-	return data
 }

@@ -1,30 +1,30 @@
 package neuronet
 
 import (
-	"math/rand"
 	"fmt"
+	"math/rand"
 
-	"github.com/nu7hatch/gouuid"
 	"github.com/TheBeege/Kerensky/config"
+	"github.com/nu7hatch/gouuid"
 )
 
 type Nucleus struct {
-	id *uuid.UUID
+	id                *uuid.UUID
 	neurons           []*Neuron
 	downstreamNucleus []*Nucleus
 }
 
-func NewNucleus(configData *config.Config) *Nucleus {
+func NewNucleus() *Nucleus {
 	fmt.Println("Generating new nucleus")
-	varianceResult := rand.Intn(configData.NeuronCountVariance*2) - configData.NeuronCountVariance
+	varianceResult := rand.Intn(config.Config.NeuronCountVariance*2) - config.Config.NeuronCountVariance
 	neurons := make([]*Neuron, 0)
 	id, _ := uuid.NewV4()
 	nucleus := &Nucleus{
-		id: id,
+		id:      id,
 		neurons: neurons,
 	}
-	for i := 0; i < configData.AvgNucleusNeuronCount + varianceResult; i++ {
-		nucleus.neurons = append(nucleus.neurons, newNeuron(nucleus, configData))
+	for i := 0; i < config.Config.AvgNucleusNeuronCount+varianceResult; i++ {
+		nucleus.neurons = append(nucleus.neurons, newNeuron(nucleus))
 	}
 	return nucleus
 }
