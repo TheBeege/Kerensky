@@ -1,6 +1,7 @@
 package genalg
 
 import (
+	"fmt"
 	"github.com/TheBeege/Kerensky/config"
 	"github.com/TheBeege/Kerensky/utils"
 	"math/rand"
@@ -19,6 +20,7 @@ type Algo struct {
 	mutationRate     float64
 	crossoverRate    float64
 	generationCount  uint64
+	fittestGenome    *Genome
 }
 
 func NewAlgo(populationSize int, mutationRate float64, crossoverRate float64, numWeights int) *Algo {
@@ -57,14 +59,15 @@ func (a *Algo) Epoch(originalPopulation []*Genome) []*Genome {
 	for len(newPopulation) < len(a.population) {
 		parent1 := a.rouletteGetChromosome()
 		parent2 := a.rouletteGetChromosome()
+		fmt.Printf("parent1: %s", parent1.String())
 
 		var childWeights1, childWeights2 []float64
 		a.crossover(parent1.weights, parent2.weights, childWeights1, childWeights2)
 
 		a.mutate(childWeights1, childWeights2)
 
-		newPopulation = append(newPopulation, &Genome{weights: childWeights1, fitness: 0})
-		newPopulation = append(newPopulation, &Genome{weights: childWeights2, fitness: 0})
+		newPopulation = append(newPopulation, NewGenome(childWeights1, 0))
+		newPopulation = append(newPopulation, NewGenome(childWeights2, 0))
 	}
 	return newPopulation
 }
@@ -105,17 +108,71 @@ func (a *Algo) mutate(childWeights1 []float64, childWeights2 []float64) {
 }
 
 func (a *Algo) rouletteGetChromosome() *Genome {
-	return nil
+	//generate a random number between 0 & total fitness count
+	randNum := utils.RandFloat() * a.totalFitness
+
+	//this will be set to the chosen chromosome
+	var theChosenOne *Genome
+
+	//go through the chromosones adding up the fitness so far
+	var fitnessSoFar float64 = 0
+
+	for i := 0; i < len(a.population); i++ {
+		fitnessSoFar += a.population[i].fitness
+
+		//if the fitness so far > random number return the chromo at
+		//this point
+		if fitnessSoFar >= randNum {
+			theChosenOne = a.population[i]
+			break
+		}
+	}
+
+	return theChosenOne
 }
 
-func (a *Algo) grabNBest(numBest int, numCopies int) []*Genome {
-	return nil
+func (a *Algo) grabNBest(numBest int, numCopies int) {
+	fmt.Printf("numBest: %d, len(a.population): %d, index: %d\n", numBest, len(a.population), (len(a.population)-1)-numBest)
+	for ; numBest > 0; numBest-- {
+		best := a.population[(len(a.population)-1)-numBest]
+		for i := 0; i < numCopies; i++ {
+			a.population = append(a.population, best)
+		}
+	}
 }
 
 func (a *Algo) calculateStats() {
+	a.totalFitness = 0
 
+	var highestSoFar float64 = 0
+	var lowestSoFar float64 = 9999999
+
+	for i := 0; i < len(a.population); i++ {
+		//update fittest if necessary
+		if a.population[i].fitness > highestSoFar {
+			highestSoFar = a.population[i].fitness
+
+			a.fittestGenome = a.population[i]
+
+			a.bestFitness = highestSoFar
+		}
+
+		//update worst if necessary
+		if a.population[i].fitness < lowestSoFar {
+			lowestSoFar = a.population[i].fitness
+			a.worstFitness = lowestSoFar
+		}
+
+		a.totalFitness += a.population[i].fitness
+
+	} //next chromo
+
+	a.avgFitness = a.totalFitness / float64(len(a.population))
 }
 
 func (a *Algo) reset() {
-
+	a.totalFitness = 0
+	a.bestFitness = 0
+	a.worstFitness = 9999999
+	a.avgFitness = 0
 }

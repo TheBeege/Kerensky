@@ -1,5 +1,9 @@
 package genalg
 
+import (
+	"fmt"
+)
+
 type Genome struct {
 	weights []float64
 	fitness float64
@@ -20,4 +24,8 @@ func (g *Genome) compare(other *Genome) int8 {
 	} else {
 		return 0
 	}
+}
+
+func (g *Genome) String() string {
+	return fmt.Sprintf("Genome(weights:%v, fitness:%f)", g.weights, g.fitness)
 }
