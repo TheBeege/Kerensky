@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/TheBeege/Kerensky/config"
+	"github.com/TheBeege/Kerensky/genalg"
 	"github.com/TheBeege/Kerensky/neuronet"
 	"log"
 )
@@ -15,7 +16,13 @@ func main() {
 		nuclei = append(nuclei, neuronet.NewNucleus())
 	}
 
-	for _, nucleus := range nuclei {
-		log.Println(nucleus)
-	}
+	algo := genalg.NewAlgo(
+		config.Config.NucleusCount,
+		config.Config.MutationRate,
+		config.Config.CrossoverRate,
+		10) // numWeights
+
+	population := make([]*genalg.Genome, 0)
+
+	algo.Epoch(population)
 }

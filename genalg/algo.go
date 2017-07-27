@@ -3,7 +3,6 @@ package genalg
 import (
 	"github.com/TheBeege/Kerensky/config"
 	"github.com/TheBeege/Kerensky/utils"
-	//"math"
 	"math/rand"
 	"reflect"
 	"sort"
